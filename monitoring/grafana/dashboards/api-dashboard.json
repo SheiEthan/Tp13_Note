@@ -1,0 +1,309 @@
+{
+  "title": "API Stack — Monitoring",
+  "uid": "api-stack",
+  "version": 1,
+  "schemaVersion": 37,
+  "refresh": "10s",
+  "tags": ["api", "docker"],
+  "timezone": "browser",
+  "time": { "from": "now-30m", "to": "now" },
+  "panels": [
+
+    { "id": 100, "title": "Vue d'ensemble", "type": "row", "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 }, "collapsed": false },
+
+    {
+      "id": 1,
+      "title": "Requêtes totales",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": 0 }] }
+        }
+      },
+      "targets": [{ "expr": "sum(http_requests_total)", "refId": "A" }]
+    },
+
+    {
+      "id": 2,
+      "title": "Taux de requêtes",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "decimals": 2,
+          "color": { "mode": "fixed", "fixedColor": "green" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+        }
+      },
+      "targets": [{ "expr": "sum(rate(http_requests_total[1m]))", "refId": "A" }]
+    },
+
+    {
+      "id": 3,
+      "title": "CPU hôte",
+      "type": "gauge",
+      "gridPos": { "x": 8, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "minVizHeight": 75,
+        "minVizWidth": 75
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "orange", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      },
+      "targets": [{ "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m]))) * 100", "refId": "A" }]
+    },
+
+    {
+      "id": 4,
+      "title": "RAM utilisée",
+      "type": "gauge",
+      "gridPos": { "x": 12, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "minVizHeight": 75,
+        "minVizWidth": 75
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "orange", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      },
+      "targets": [{ "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100", "refId": "A" }]
+    },
+
+    {
+      "id": 5,
+      "title": "Disque utilisé",
+      "type": "gauge",
+      "gridPos": { "x": 16, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "minVizHeight": 75,
+        "minVizWidth": 75
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      },
+      "targets": [{ "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100", "refId": "A" }]
+    },
+
+    {
+      "id": 6,
+      "title": "Uptime hôte",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 1, "w": 4, "h": 4 },
+      "datasource": "Prometheus",
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": { "mode": "fixed", "fixedColor": "purple" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": 0 }] }
+        }
+      },
+      "targets": [{ "expr": "node_time_seconds - node_boot_time_seconds", "refId": "A" }]
+    },
+
+    { "id": 101, "title": "API — Métriques applicatives", "type": "row", "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 }, "collapsed": false },
+
+    {
+      "id": 7,
+      "title": "Taux de requêtes par instance (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        { "expr": "rate(http_requests_total{instance=\"cat:3000\"}[1m])", "legendFormat": "cat", "refId": "A" },
+        { "expr": "rate(http_requests_total{instance=\"dog:3000\"}[1m])", "legendFormat": "dog", "refId": "B" }
+      ]
+    },
+
+    {
+      "id": 8,
+      "title": "Requêtes cumulées par instance",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        { "expr": "http_requests_total{instance=\"cat:3000\"}", "legendFormat": "cat", "refId": "A" },
+        { "expr": "http_requests_total{instance=\"dog:3000\"}", "legendFormat": "dog", "refId": "B" }
+      ]
+    },
+
+    { "id": 102, "title": "Système — CPU & Mémoire", "type": "row", "gridPos": { "x": 0, "y": 14, "w": 24, "h": 1 }, "collapsed": false },
+
+    {
+      "id": 9,
+      "title": "CPU par mode (%)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 15, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "targets": [
+        { "expr": "(1 - rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100", "legendFormat": "CPU {{cpu}} utilisé", "refId": "A" }
+      ]
+    },
+
+    {
+      "id": 10,
+      "title": "Mémoire RAM (GB)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 15, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decgbytes",
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "targets": [
+        { "expr": "node_memory_MemTotal_bytes / 1e9", "legendFormat": "Total", "refId": "A" },
+        { "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1e9", "legendFormat": "Utilisée", "refId": "B" },
+        { "expr": "node_memory_MemAvailable_bytes / 1e9", "legendFormat": "Disponible", "refId": "C" }
+      ]
+    },
+
+    { "id": 103, "title": "Système — Réseau & Disque", "type": "row", "gridPos": { "x": 0, "y": 23, "w": 24, "h": 1 }, "collapsed": false },
+
+    {
+      "id": 11,
+      "title": "Réseau — Débit entrant (KB/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "KBs",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        { "expr": "rate(node_network_receive_bytes_total{device!=\"lo\"}[1m]) / 1024", "legendFormat": "{{device}} RX", "refId": "A" }
+      ]
+    },
+
+    {
+      "id": 12,
+      "title": "Réseau — Débit sortant (KB/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 7 },
+      "datasource": "Prometheus",
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "KBs",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        { "expr": "rate(node_network_transmit_bytes_total{device!=\"lo\"}[1m]) / 1024", "legendFormat": "{{device}} TX", "refId": "A" }
+      ]
+    }
+
+  ]
+}

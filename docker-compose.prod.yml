@@ -1,0 +1,60 @@
+services:
+  cat:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  dog:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  nginx:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+
+  prometheus:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+  grafana:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+
+  node-exporter:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+
+  cadvisor:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  portainer:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
