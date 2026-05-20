@@ -9,7 +9,7 @@ L'API est dans le dossier `api/` et expose trois routes :
 | Route | Description |
 |-------|-------------|
 | `GET /` | Retourne le hostname du conteneur, la valeur de `PET` et un compteur de requêtes |
-| `GET /healthz` | Répond `{ "status": "ok" }` avec HTTP 200 — utilisé par le Healthcheck Docker |
+| `GET /healthz` | Répond `{ "status": "ok" }` avec HTTP 200, utilisé par le Healthcheck Docker |
 | `GET /metrics` | Expose les métriques Prometheus via `prom-client` |
 
 Le compteur de requêtes est implémenté avec `prom-client` (`http_requests_total`) et exposé sur `/metrics` pour être scrappé par Prometheus.
@@ -18,8 +18,8 @@ Le compteur de requêtes est implémenté avec `prom-client` (`http_requests_tot
 
 Points clés du Dockerfile :
 
-- **Image de base** : `node:20-alpine` — image minimale, moins de surface d'attaque (voir Partie 4)
-- **Utilisateur non-root** : `USER node` — l'utilisateur `node` est intégré à l'image officielle Node.js
+- **Image de base** : `node:20-alpine`, image minimale, moins de surface d'attaque (voir Partie 4)
+- **Utilisateur non-root** : `USER node`, l'utilisateur `node` est intégré à l'image officielle Node.js
 - **Dépendances de production uniquement** : `npm install --omit=dev`
 - **Ordre des COPY** : `package*.json` en premier pour profiter du cache Docker lors des `npm install`, puis le code source
 - **Healthcheck** : cible `/healthz` avec `interval=30s`, `timeout=5s`, `start-period=10s`
@@ -42,10 +42,10 @@ Route `GET /healthz` :
 
 Le registry est défini dans `docker-compose.registry.yml`, séparé de la stack principale :
 
-- **`registry:2`** — registry Docker privé exposé sur le port `5000`
-- **`joxit/docker-registry-ui`** — interface web exposée sur le port `8080`
+- **`registry:2`** : registry Docker privé exposé sur le port `5000`
+- **`joxit/docker-registry-ui`** : interface web exposée sur le port `8080`
 
-La configuration du registry (`registry/config.yml`) active la suppression d'images et les en-têtes CORS pour l'interface web. L'interface utilise `NGINX_PROXY_PASS_URL` pour proxifier les appels API vers le registry côté serveur — ce qui permet d'y accéder depuis un navigateur distant (VPS) sans exposer le registry directement.
+La configuration du registry (`registry/config.yml`) active la suppression d'images et les en-têtes CORS pour l'interface web. L'interface utilise `NGINX_PROXY_PASS_URL` pour proxifier les appels API vers le registry côté serveur, ce qui permet d'y accéder depuis un navigateur distant (VPS) sans exposer le registry directement.
 
 ### Push de l'image
 
@@ -167,9 +167,9 @@ const secret = require('fs').readFileSync('/run/secrets/mon_secret', 'utf8').tri
 ### Question Backup — que faut-il sauvegarder en production ?
 
 **Recréable automatiquement** (depuis le code ou le registry) :
-- Les images Docker — reconstruites via `docker build` ou tirées depuis le registry
-- Les conteneurs — recréés depuis les images
-- Les réseaux Docker — recréés par Compose/Swarm
+- Les images Docker : reconstruites via `docker build` ou tirées depuis le registry
+- Les conteneurs : recréés depuis les images
+- Les réseaux Docker : recréés par Compose/Swarm
 - Les fichiers de configuration versionnés dans Git (`docker-compose.yml`, `nginx.conf`, `Dockerfile`...)
 
 **Irremplaçable — à sauvegarder impérativement** :
@@ -202,9 +202,9 @@ Prometheus scrape trois sources : l'API (`cat:3000` et `dog:3000` via `/metrics`
 
 Le dashboard est provisionné automatiquement au démarrage via deux fichiers versionnés :
 
-- `monitoring/grafana/provisioning/datasources/prometheus.yml` — déclare Prometheus comme datasource par défaut
-- `monitoring/grafana/provisioning/dashboards/dashboard.yml` — indique le dossier de dashboards à charger
-- `monitoring/grafana/dashboards/api-dashboard.json` — le dashboard JSON
+- `monitoring/grafana/provisioning/datasources/prometheus.yml` : déclare Prometheus comme datasource par défaut
+- `monitoring/grafana/provisioning/dashboards/dashboard.yml` : indique le dossier de dashboards à charger
+- `monitoring/grafana/dashboards/api-dashboard.json` : le dashboard JSON
 
 Aucune configuration manuelle n'est nécessaire : le dashboard "API Stack — Monitoring" apparaît directement après `docker compose up`.
 
@@ -275,9 +275,9 @@ Les **volumes nommés** sont utilisés pour les données car Docker en gère le 
 
 Le pipeline se déclenche sur chaque push sur `main` et enchaîne trois étapes :
 
-1. **Build** — construit l'image `./api` localement avec Docker Buildx (`load: true`) sans la pousser
-2. **Scan Trivy** — analyse l'image et **fait échouer le pipeline** (`exit-code: 1`) si des CVE de sévérité `CRITICAL` non corrigées sont détectées
-3. **Push** — pousse l'image vers GHCR uniquement si le scan est passé
+1. **Build** : construit l'image `./api` localement avec Docker Buildx (`load: true`) sans la pousser
+2. **Scan Trivy** : analyse l'image et **fait échouer le pipeline** (`exit-code: 1`) si des CVE de sévérité `CRITICAL` non corrigées sont détectées
+3. **Push** : pousse l'image vers GHCR uniquement si le scan est passé
 
 ### Capture — pipeline GitHub Actions
 
