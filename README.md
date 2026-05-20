@@ -2,7 +2,7 @@
 
 ## Partie 1 — API & Dockerfile
 
-L'API expose trois routes : `GET /` (hostname, PET, compteur), `GET /healthz` (200 + `{status:ok}`), `GET /metrics` (prom-client). Le Dockerfile utilise `node:20-alpine`, `USER node`, `npm install --omit=dev`, et un HEALTHCHECK sur `/healthz`.
+L'API expose trois routes : `GET /` (hostname, PET, compteur), `GET /healthz` (200 + `{status:ok}`), `GET /metrics` (prom-client). Le Dockerfile utilise `node:20-alpine`, `USER node`, `npm install --only=production`, et un HEALTHCHECK sur `/healthz`.
 
 **Route `GET /`**
 
