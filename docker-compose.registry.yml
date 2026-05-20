@@ -7,6 +7,12 @@ services:
     volumes:
       - registry_data:/var/lib/registry
       - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5000/v2/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     restart: unless-stopped
 
   registry-ui:
@@ -20,7 +26,14 @@ services:
       - SINGLE_REGISTRY=true
       - DELETE_IMAGES=true
     depends_on:
-      - registry
+      registry:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     restart: unless-stopped
 
 volumes:

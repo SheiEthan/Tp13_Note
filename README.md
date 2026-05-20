@@ -282,3 +282,29 @@ Le pipeline se déclenche sur chaque push sur `main` et enchaîne trois étapes 
 ### Capture — pipeline GitHub Actions
 
 ![Partie 9 - GitHub Actions](captures/partie_9_1.png)
+
+---
+
+## Partie 10 — Déploiement sur VPS
+
+### IP publique
+
+La stack est déployée et accessible sur le VPS à l'adresse : **http://180.149.198.38**
+
+| Service | URL |
+|---------|-----|
+| API (via Nginx) | http://180.149.198.38/ |
+| API — service cat | http://180.149.198.38/cat |
+| API — service dog | http://180.149.198.38/dog |
+| Prometheus | http://180.149.198.38:9090 |
+| Grafana | http://180.149.198.38:40110 |
+| Portainer | http://180.149.198.38:40111 |
+| Registry UI | http://180.149.198.38:8080 |
+
+### Stack fonctionnelle depuis le navigateur
+
+Url du VPS : http://180.149.198.38/
+
+### Capture — `docker compose ps` sur le VPS
+
+![Partie 10 - docker compose ps](captures/partie_10_1.png)
