@@ -178,10 +178,12 @@ Stack complète déployée sur VPS à l'adresse **http://180.149.198.38**
 | API | http://180.149.198.38/ |
 | /cat | http://180.149.198.38/cat |
 | /dog | http://180.149.198.38/dog |
-| Prometheus | http://180.149.198.38:9090 |
+| Prometheus | http://localhost:9090 |
 | Grafana | http://180.149.198.38:40110 |
 | Portainer | http://180.149.198.38:40111 |
 | Registry UI | http://180.149.198.38:8080 |
+
+Grafana : admin / admin
 
 **`docker compose ps` sur le VPS — stack complète**
 
